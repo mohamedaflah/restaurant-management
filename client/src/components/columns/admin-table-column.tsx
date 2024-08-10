@@ -25,6 +25,7 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className="mt-1"
       />
     ),
     cell: ({ row }) => (
@@ -43,6 +44,7 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
       <DataTableColumnHeader
         sortOption={true}
         column={column}
+        field="name"
         title="Restaurant "
       />
     ),
@@ -53,7 +55,8 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
       <DataTableColumnHeader
         sortOption={false}
         column={column}
-        title="Image "
+        title="Image"
+        field="images"
       />
     ),
     cell: ({ row }) => (
@@ -72,7 +75,8 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
       <DataTableColumnHeader
         sortOption={true}
         column={column}
-        title="Location "
+        title="Location"
+        field="location"
       />
     ),
   },
@@ -83,6 +87,7 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
         sortOption={true}
         column={column}
         title="Contact number "
+        field="contactNum"
       />
     ),
   },
@@ -93,6 +98,7 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
         sortOption={true}
         column={column}
         title="Pin code "
+        field="pincode"
       />
     ),
   },

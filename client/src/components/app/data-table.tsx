@@ -26,7 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -41,6 +41,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useSearchParams } from "react-router-dom";
+import { X } from "lucide-react";
+import { AddRestaurantModal } from "./addrestaurent-modal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -61,17 +64,44 @@ export function DataTable<TData, TValue>({
       rowSelection,
     },
   });
+  // row selection
+  useEffect(() => console.log(rowSelection), [rowSelection]);
+  // row selection
+  const [searchParam, setSearchParam] = useSearchParams();
+  const hasFilters = Array.from(searchParam.entries()).some(
+    ([key, value]) =>
+      ["sort", "location", "cuisine", "pincode", "search"].includes(key) &&
+      value.trim() !== ""
+  );
   return (
     <div>
       <div className="flex items-center py-4">
         <Input
           placeholder="Search restaurants..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+          className="max-w-sm h-9"
+          value={
+            searchParam.get("search") &&
+            typeof searchParam.get("search") == "string"
+              ? (searchParam.get("search") as string)
+              : ""
           }
-          className="max-w-sm"
+          onChange={(e) => {
+            const param = new URLSearchParams(window.location.search);
+            param.set("search", e.target.value);
+            setSearchParam(param);
+          }}
         />
+        {hasFilters && (
+          <>
+            <Button
+              variant={"ghost"}
+              className="h-9 ml-2 gap-2"
+              onClick={() => setSearchParam({})}
+            >
+              Clear filters <X className="w-4" />
+            </Button>
+          </>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -109,6 +139,7 @@ export function DataTable<TData, TValue>({
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <AddRestaurantModal />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -162,12 +193,21 @@ export function DataTable<TData, TValue>({
       </div>
       <div className="flex items-center justify-between px-2 mt-3">
         <div className="flex-1 text-sm text-muted-foreground">
-          10 row(s) selected.
+          {Object.entries(rowSelection).length} row(s) selected.
         </div>
         <div className="flex items-center space-x-6 lg:space-x-8">
           <div className="flex items-center space-x-2">
             <p className="text-sm font-medium">Rows per page</p>
-            <Select value={`${table.getState().pagination.pageSize}`}>
+            <Select
+              value={`${
+                searchParam.get("pageSize") ? searchParam.get("pageSize") : 10
+              }`}
+              onValueChange={(value) => {
+                const param = new URLSearchParams(window.location.search);
+                param.set("pageSize", value);
+                setSearchParam(param);
+              }}
+            >
               <SelectTrigger className="h-8 w-[70px]">
                 <SelectValue
                   placeholder={table.getState().pagination.pageSize}

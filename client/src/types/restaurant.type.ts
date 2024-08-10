@@ -1,15 +1,17 @@
 export interface IRestaurant {
+  _id: string;
   name: string;
   location: string;
   cuisines?: string[];
   images?: string[];
-  menu?: string[];
+  menu?: { description: string; images: string[] }[];
   description: string;
   contactNum?: string;
   pincode?: string;
 }
 export const sampleRestaurants: IRestaurant[] = [
   {
+    _id: "1",
     name: "The Spice Route",
     location: "Kochi, Kerala",
     cuisines: ["Indian", "Asian"],
@@ -23,6 +25,7 @@ export const sampleRestaurants: IRestaurant[] = [
     pincode: "682001",
   },
   {
+    _id: "2",
     name: "La Pinoz Pizza",
     location: "Pune, Maharashtra",
     cuisines: ["Italian", "Pizza"],
@@ -36,6 +39,7 @@ export const sampleRestaurants: IRestaurant[] = [
     pincode: "411001",
   },
   {
+    _id: "3",
     name: "Sushi World",
     location: "Tokyo, Japan",
     cuisines: ["Japanese", "Sushi"],
@@ -49,6 +53,7 @@ export const sampleRestaurants: IRestaurant[] = [
     pincode: "100-0001",
   },
   {
+    _id: "4",
     name: "Bistro Cafe",
     location: "Paris, France",
     cuisines: ["French", "Cafe"],
@@ -62,6 +67,7 @@ export const sampleRestaurants: IRestaurant[] = [
     pincode: "75001",
   },
   {
+    _id: "5",
     name: "El Taco Loco",
     location: "Mexico City, Mexico",
     cuisines: ["Mexican"],
@@ -75,6 +81,7 @@ export const sampleRestaurants: IRestaurant[] = [
     pincode: "01000",
   },
   {
+    _id: "6",
     name: "Dragon Palace",
     location: "Beijing, China",
     cuisines: ["Chinese"],
