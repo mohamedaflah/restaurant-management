@@ -4,7 +4,7 @@ export interface IRestaurant {
   location: string;
   cuisines?: string[];
   images?: string[];
-  menu?: { description: string; images: string[] }[];
+  menu?: { description: string; image: string}[];
   description: string;
   contactNum?: string;
   pincode?: string;
