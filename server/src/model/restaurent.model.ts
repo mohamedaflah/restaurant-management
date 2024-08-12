@@ -11,11 +11,12 @@ const restaurentModel = new mongoose.Schema({
   },
   cuisines: {
     type: [String],
+    default: [],
   },
   images: {
     type: [String],
   },
-  menu: { type: [String] },
+  menu: { type: [{ description: String, image: String }] },
   description: { type: String, required: true },
   contactNum: { type: String },
   pincode: { type: String },

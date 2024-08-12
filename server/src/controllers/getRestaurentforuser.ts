@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { restaurentDb } from "../model/restaurent.model";
 
-export const getAllRestaurant = async (
+export const getAllRestaurantforUsers = async (
   req: Request,
   res: Response,
   next: NextFunction

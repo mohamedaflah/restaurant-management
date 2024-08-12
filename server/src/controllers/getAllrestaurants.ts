@@ -7,32 +7,21 @@ export const getAllRestaurant = async (
   next: NextFunction
 ) => {
   try {
-    const {
-      page = 1,
-      pageSize = 10,
-      type,
-      search,
-      cuisine,
-      location,
-      pincode,
-    } = req.query;
+    const { page = 1, pageSize = 10, search, pincode, location } = req.query;
+    console.log(req.query);
 
     const filter: any = {};
 
-    if (search) {
+    if (search && search !== "undefined" && search !== "null") {
       filter.name = { $regex: search, $options: "i" };
     }
 
-    if (location) {
+    if (location && location !== "undefined" && location !== "null") {
       filter.location = { $regex: location, $options: "i" };
     }
 
-    if (pincode) {
+    if (pincode && pincode !== "undefined" && pincode !== "null") {
       filter.pincode = pincode;
-    }
-
-    if (cuisine) {
-      filter.cuisines = { $in: cuisine };
     }
 
     const limit = parseInt(pageSize as string);
@@ -42,8 +31,15 @@ export const getAllRestaurant = async (
 
     const totalRestaurants = await restaurentDb.countDocuments(filter);
 
+    console.log({
+      total: totalRestaurants,
+      currentPage: page,
+      totalPages: Math.ceil(totalRestaurants / limit),
+    });
+    // console.log(restaurants);
+
     res.status(200).json({
-      data: restaurants,
+      restaurants,
       total: totalRestaurants,
       currentPage: page,
       totalPages: Math.ceil(totalRestaurants / limit),

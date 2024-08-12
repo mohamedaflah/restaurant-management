@@ -62,7 +62,7 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
     cell: ({ row }) => (
       <div>
         <img
-          src={(row.getValue("images") as Array<string>)[1]}
+          src={row?.original?.images?.[0]}
           className="size-10 rounded-sm"
           alt=""
         />

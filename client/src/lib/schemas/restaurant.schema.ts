@@ -3,11 +3,11 @@ import { z } from "zod";
 export const restaurantSchema = z.object({
   name: z
     .string()
-    .min(2, { message: "Restaurant must be at least 2 characters long" })
+    .min(2, { message: "2 charecters need" })
     .max(22, { message: "Restaurant cannot exceed 22 characters" }),
   location: z
     .string()
-    .min(2, { message: "Location must be at least 2 characters long" })
+    .min(2, { message: " 2 characters long" })
     .max(22, { message: "Location cannot exceed 22 characters" }),
   images: z
     .array(

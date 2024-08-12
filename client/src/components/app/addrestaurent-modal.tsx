@@ -1,4 +1,4 @@
-import { UploadCloudIcon, X } from "lucide-react";
+import { Loader2, UploadCloudIcon, X } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -17,6 +17,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { restaurantSchema } from "@/lib/schemas/restaurant.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "@/redux/store";
+import { retaurantAddaction } from "@/redux/actions/restaurant-add.action";
 export const AddRestaurantModal = () => {
   const removeHashValue = (hashToRemove: string): void => {
     const currentHash = window.location.hash;
@@ -54,6 +57,15 @@ export const AddRestaurantModal = () => {
   }>({ title: "", description: "", menuImg: null });
 
   const handleMenuAdd = () => {
+    if (!menu.title.trim()) {
+      return toast.error("Please fill menu title");
+    }
+    if (!menu.description.trim()) {
+      return toast.error("Please fill menu description");
+    }
+    if (!menu.menuImg) {
+      return toast.error("Please upload menu image");
+    }
     const copyMenu = { ...menu, image: menu.menuImg };
     if (getValues("menu")) {
       setValue("menu", [
@@ -83,7 +95,17 @@ export const AddRestaurantModal = () => {
   const handleMenuImage = (e: ChangeEvent<HTMLInputElement>) => {
     setMenu({ ...menu, [e.target.name]: e?.target?.files?.[0] });
   };
-  const handleAddRestaurant = (value: z.infer<typeof restaurantSchema>) => {value};
+  const dispatch = useAppDispatch();
+  const handleAddRestaurant = (value: z.infer<typeof restaurantSchema>) => {
+    console.log(value);
+    dispatch(retaurantAddaction(value)).then((res) => {
+      if (res.type.endsWith("fulfilled")) {
+        setOpenDialog(false);
+        removeHashValue("#addrestaurant");
+      }
+    });
+  };
+  const { loading } = useAppSelector((state) => state.retaurant);
   return (
     <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
       <AlertDialogTrigger>
@@ -113,7 +135,7 @@ export const AddRestaurantModal = () => {
               className="flex flex-col overflow-x-hidden scrollbar-none px-1"
             >
               <div className="grid grid-cols-2 gap-3 w-full">
-                <div className="flex flex-col gap-1 w-full ">
+                <div className="flex flex-col  w-full ">
                   <label htmlFor="">Restaurant name</label>
                   <Input
                     type="text"
@@ -129,7 +151,7 @@ export const AddRestaurantModal = () => {
                     {errors && errors.name && errors.name?.message}
                   </span>
                 </div>
-                <div className="flex flex-col gap-1 w-full ">
+                <div className="flex flex-col  w-full ">
                   <label htmlFor="">Restaurant location</label>
                   <Input
                     type="text"
@@ -146,7 +168,7 @@ export const AddRestaurantModal = () => {
                   </span>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 w-full">
+              <div className="grid grid-cols-2 gap-3 w-full mt-2">
                 <div className="flex flex-col gap-1 w-full ">
                   <label htmlFor="">Contact number</label>
                   <Input
@@ -180,7 +202,7 @@ export const AddRestaurantModal = () => {
                   </span>
                 </div>
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 mt-2">
                 <Textarea
                   placeholder="restaurant description"
                   className="resize-none"
@@ -200,6 +222,7 @@ export const AddRestaurantModal = () => {
                   id="restaurantImage"
                   multiple
                   className="hidden"
+                  accept="image/*"
                   onChange={(e) => {
                     const filesArray = Array.from(
                       e.target.files as unknown as unknown[]
@@ -223,7 +246,7 @@ export const AddRestaurantModal = () => {
                 />
                 <label
                   htmlFor="restaurantImage"
-                  className="w-full min-h-20 border rounded-md flex items-center justify-center flex-col gap-1 py-2 cursor-pointer"
+                  className="w-full min-h-20 mt-2 border rounded-md flex items-center justify-center flex-col gap-1 py-2 cursor-pointer"
                 >
                   <img src="/images/upload_img.svg" className="h-16" alt="" />
                   <span>Upload restaurant related images</span>
@@ -265,7 +288,7 @@ export const AddRestaurantModal = () => {
                   {errors && errors.images && errors.images?.message}
                 </span>
               </div>
-              <div className="w-full  grid-grid-cols-1 rounded-sm border p-2">
+              <div className="w-full  grid-grid-cols-1 rounded-sm border p-2 mt-2">
                 <div className="w-full flex flex-col gap-2">
                   <Input
                     className="w-full"
@@ -367,7 +390,17 @@ export const AddRestaurantModal = () => {
                 </>
               )}
               <div className="w-full mt-2 justify-end flex border-y py-2">
-                <Button type="submit">Submit details</Button>
+                <Button
+                  type="submit"
+                  className={`gap-2 ${loading ? "pointer-events-none" : ""}`}
+                >
+                  Submit details{" "}
+                  {loading && (
+                    <>
+                      <Loader2 className="w-5 animate-spin" />
+                    </>
+                  )}
+                </Button>
               </div>
             </form>
           </AlertDialogDescription>

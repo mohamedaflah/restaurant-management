@@ -44,6 +44,7 @@ import {
 import { useSearchParams } from "react-router-dom";
 import { X } from "lucide-react";
 import { AddRestaurantModal } from "./addrestaurent-modal";
+import { useAppSelector } from "@/redux/store";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -66,7 +67,9 @@ export function DataTable<TData, TValue>({
   });
   // row selection
   useEffect(() => console.log(rowSelection), [rowSelection]);
+
   // row selection
+  const { filters } = useAppSelector((state) => state.retaurant);
   const [searchParam, setSearchParam] = useSearchParams();
   const hasFilters = Array.from(searchParam.entries()).some(
     ([key, value]) =>
@@ -96,7 +99,19 @@ export function DataTable<TData, TValue>({
             <Button
               variant={"ghost"}
               className="h-9 ml-2 gap-2"
-              onClick={() => setSearchParam({})}
+              onClick={() => {
+                const params = new URLSearchParams(location.search);
+                if (params.has("search")) {
+                  params.set("search", "");
+                }
+                if (params.has("location")) {
+                  params.set("location", "");
+                }
+                if (params.has("pincode")) {
+                  params.set("pincode", "");
+                }
+                setSearchParam(params);
+              }}
             >
               Clear filters <X className="w-4" />
             </Button>
@@ -214,7 +229,7 @@ export function DataTable<TData, TValue>({
                 />
               </SelectTrigger>
               <SelectContent side="top">
-                {[10, 20, 30, 40, 50].map((pageSize) => (
+                {[7, 10, 20, 40, 50].map((pageSize) => (
                   <SelectItem key={pageSize} value={`${pageSize}`}>
                     {pageSize}
                   </SelectItem>
@@ -227,19 +242,39 @@ export function DataTable<TData, TValue>({
             {table.getPageCount()}
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" className="hidden h-8 w-8 p-0 lg:flex">
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              disabled={Number(filters?.currentPage) <= 1}
+            >
               <span className="sr-only">Go to first page</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
             </Button>
-            <Button variant="outline" className="h-8 w-8 p-0">
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              disabled={Number(filters?.currentPage) <= 1}
+            >
               <span className="sr-only">Go to previous page</span>
               <ChevronLeftIcon className="h-4 w-4" />
             </Button>
-            <Button variant="outline" className="h-8 w-8 p-0">
+            <Button
+              variant="outline"
+              className="h-8 w-8 p-0"
+              disabled={
+                Number(filters?.currentPage) >= Number(filters.totalPages)
+              }
+            >
               <span className="sr-only">Go to next page</span>
               <ChevronRightIcon className="h-4 w-4" />
             </Button>
-            <Button variant="outline" className="hidden h-8 w-8 p-0 lg:flex">
+            <Button
+              variant="outline"
+              className="hidden h-8 w-8 p-0 lg:flex"
+              disabled={
+                Number(filters?.currentPage) >= Number(filters.totalPages)
+              }
+            >
               <span className="sr-only">Go to last page</span>
               <DoubleArrowRightIcon className="h-4 w-4" />
             </Button>
