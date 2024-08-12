@@ -1,5 +1,7 @@
 import { Search } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 export const Header = () => {
+  const [searchParam, setSearchParam] = useSearchParams();
   return (
     <header
       className="wrapper h-20 flex justify-between items-center"
@@ -13,6 +15,12 @@ export const Header = () => {
         <div className="h-10 px-3 flex items-center rounded-md shadow-inner bg-slate-50">
           <input
             type="search"
+            value={searchParam.get("search") as string}
+            onChange={(e) => {
+              const param = new URLSearchParams(window.location.search);
+              param.set("search", e.target.value);
+              setSearchParam(param);
+            }}
             className="h-full w-full outline-none bg-transparent"
             placeholder="Search Restaurant"
           />

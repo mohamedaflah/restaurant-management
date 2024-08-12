@@ -8,8 +8,8 @@ export const deleteRestaurant = async (
 ) => {
   try {
     const { restaurantId } = req.query;
-    console.log("🚀 ~ restaurantId:", restaurantId)
-    
+    console.log("🚀 ~ restaurantId:", restaurantId);
+
     await restaurentDb.deleteOne({ _id: restaurantId });
     return res.status(200).json({ status: true, message: "Deleted" });
   } catch (error) {

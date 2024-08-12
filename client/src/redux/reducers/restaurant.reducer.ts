@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { getAllrestaurantAdmin } from "../actions/getAllrestaurant.action";
 import { retaurantUpdateaction } from "../actions/updateRestaurant";
 import { deleteRestaurant } from "../actions/deleteRestaurantAction";
+import { getAllrestaurantUser } from "../actions/getRestaurantuser";
 
 const initialState: RestaurantInitial = {
   loading: false,
@@ -86,6 +87,29 @@ const restaurantReducer = createSlice({
       .addCase(deleteRestaurant.rejected, (state, { payload }) => {
         state.loading = false;
         state.err = payload as string;
+      })
+      .addCase(getAllrestaurantUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getAllrestaurantUser.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        if (state?.restaurants) {
+          state.restaurants = [
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...payload.restaurants,
+          ] as IRestaurant[];
+        } else {
+          state.restaurants = [...payload.restaurants];
+        }
+        state.filters.currentPage = payload.currentPage;
+        state.filters.total = payload.total;
+        state.filters.totalPages = payload.totalPages;
+        state.err = false;
+      })
+      .addCase(getAllrestaurantUser.rejected, (state, { payload }) => {
+        state.loading = false;
+        state.err = String(payload);
+        toast.error(state.err);
       });
   },
 });

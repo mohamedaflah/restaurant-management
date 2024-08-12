@@ -40,7 +40,7 @@ export const getAllRestaurant = async (
       currentPage: page,
       totalPages: Math.ceil(totalRestaurants / limit),
     });
-    // console.log(restaurants);
+    console.log(restaurants);
 
     res.status(200).json({
       restaurants,
