@@ -16,6 +16,8 @@ import { Checkbox } from "../ui/checkbox";
 import { DataTableColumnHeader } from "./column-header";
 import toast from "react-hot-toast";
 import { UpdateRestaurant } from "../app/updaterestaurant-modal";
+import { DeleteRestaurant } from "../app/delete-resturant";
+
 export const adminTableColumn: ColumnDef<IRestaurant>[] = [
   {
     id: "select",
@@ -133,7 +135,7 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
               <DropdownMenuSeparator />
               <DropdownMenuItem>View more details</DropdownMenuItem>
               <UpdateRestaurant data={row.original} />
-              <DropdownMenuItem>Delete restaurant</DropdownMenuItem>
+              <DeleteRestaurant id={String(row.original._id)} />
             </DropdownMenuContent>
           </DropdownMenu>
         </>

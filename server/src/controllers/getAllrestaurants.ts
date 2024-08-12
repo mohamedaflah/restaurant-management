@@ -27,7 +27,11 @@ export const getAllRestaurant = async (
     const limit = parseInt(pageSize as string);
     const skip = (parseInt(page as string) - 1) * limit;
 
-    const restaurants = await restaurentDb.find(filter).skip(skip).limit(limit);
+    const restaurants = await restaurentDb
+      .find(filter)
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
 
     const totalRestaurants = await restaurentDb.countDocuments(filter);
 

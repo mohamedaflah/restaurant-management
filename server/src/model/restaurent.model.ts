@@ -16,11 +16,11 @@ const restaurentModel = new mongoose.Schema({
   images: {
     type: [String],
   },
-  menu: { type: [{ description: String, image: String }] },
+  menu: { type: [{ description: String, image: String,title:String }] },
   description: { type: String, required: true },
   contactNum: { type: String },
   pincode: { type: String },
-});
+},{timestamps:true});
 
 export const restaurentDb =
   mongoose.models.restaurent || mongoose.model("restaurent", restaurentModel);

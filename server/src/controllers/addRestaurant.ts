@@ -33,7 +33,7 @@ export const addRestaurant = async (
         fs.writeFileSync(filePath, buffer);
         return {
           ...menu,
-          image: `${req.protocol}://${req.get("host")}/images/${fileName}`,
+          image: `${"http://localhost:4000"}/uploads/${fileName}`,
         };
       }
     );
