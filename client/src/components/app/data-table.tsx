@@ -224,9 +224,7 @@ export function DataTable<TData, TValue>({
               }}
             >
               <SelectTrigger className="h-8 w-[70px]">
-                <SelectValue
-                  placeholder={table.getState().pagination.pageSize}
-                />
+                <SelectValue placeholder={searchParam.get("pageSize")} />
               </SelectTrigger>
               <SelectContent side="top">
                 {[7, 10, 20, 40, 50].map((pageSize) => (
@@ -238,14 +236,18 @@ export function DataTable<TData, TValue>({
             </Select>
           </div>
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            Page {filters.currentPage} of {filters?.totalPages}
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               disabled={Number(filters?.currentPage) <= 1}
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(1));
+                setSearchParam(params);
+              }}
             >
               <span className="sr-only">Go to first page</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
@@ -254,6 +256,11 @@ export function DataTable<TData, TValue>({
               variant="outline"
               className="h-8 w-8 p-0"
               disabled={Number(filters?.currentPage) <= 1}
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(Number(filters?.currentPage) - 1));
+                setSearchParam(params);
+              }}
             >
               <span className="sr-only">Go to previous page</span>
               <ChevronLeftIcon className="h-4 w-4" />
@@ -261,6 +268,11 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               className="h-8 w-8 p-0"
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(Number(filters?.currentPage) + 1));
+                setSearchParam(params);
+              }}
               disabled={
                 Number(filters?.currentPage) >= Number(filters.totalPages)
               }
@@ -271,6 +283,11 @@ export function DataTable<TData, TValue>({
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(filters?.totalPages));
+                setSearchParam(params);
+              }}
               disabled={
                 Number(filters?.currentPage) >= Number(filters.totalPages)
               }

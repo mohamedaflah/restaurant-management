@@ -70,7 +70,7 @@ export default function Home() {
       <section className="w-full mt-5">
         <div className="flex justify-between">
           <h1 className="font-semibold text-2xl">Restaurants</h1>
-          <div>
+          <div className="hidden">
             <DropdownMenu>
               <DropdownMenuTrigger className="flex gap-2 items-center bg-slate-100 p-2 rounded-md shadow-md">
                 <span>Filter</span>
@@ -155,13 +155,18 @@ export default function Home() {
             </Select>
           </div>
           <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-            Page {searchParams.get("page")} of {filters?.totalPages}
+            Page {filters.currentPage} of {filters?.totalPages}
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
               disabled={Number(filters?.currentPage) <= 1}
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(1));
+                setSearchParam(params);
+              }}
             >
               <span className="sr-only">Go to first page</span>
               <DoubleArrowLeftIcon className="h-4 w-4" />
@@ -170,6 +175,11 @@ export default function Home() {
               variant="outline"
               className="h-8 w-8 p-0"
               disabled={Number(filters?.currentPage) <= 1}
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(Number(filters?.currentPage) - 1));
+                setSearchParam(params);
+              }}
             >
               <span className="sr-only">Go to previous page</span>
               <ChevronLeftIcon className="h-4 w-4" />
@@ -177,6 +187,11 @@ export default function Home() {
             <Button
               variant="outline"
               className="h-8 w-8 p-0"
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(Number(filters?.currentPage) + 1));
+                setSearchParam(params);
+              }}
               disabled={
                 Number(filters?.currentPage) >= Number(filters.totalPages)
               }
@@ -187,6 +202,11 @@ export default function Home() {
             <Button
               variant="outline"
               className="hidden h-8 w-8 p-0 lg:flex"
+              onClick={() => {
+                const params = new URLSearchParams(window.location.search);
+                params.set("page", String(filters?.totalPages));
+                setSearchParam(params);
+              }}
               disabled={
                 Number(filters?.currentPage) >= Number(filters.totalPages)
               }
