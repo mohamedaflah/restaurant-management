@@ -17,7 +17,7 @@ export const retaurantAddaction = createAsyncThunk(
         ...sendPayload,
         menu: await Promise.all(
           sendPayload.menu?.map(async (menu) => {
-            const base64 = await getFileBase64(menu.image);
+            const base64 = await getFileBase64(menu.image as File);
             return { ...menu, image: base64 };
           }) || []
         ),
@@ -28,7 +28,7 @@ export const retaurantAddaction = createAsyncThunk(
           })
         ),
       };
-       
+
       const { data } = await axiosInstance.post(`/api/restaurant`, copy);
       return data;
     } catch (error) {

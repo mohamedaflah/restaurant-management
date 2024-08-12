@@ -11,22 +11,30 @@ export const restaurantSchema = z.object({
     .max(22, { message: "Location cannot exceed 22 characters" }),
   images: z
     .array(
-      z.instanceof(File).refine((file) => file.size <= 5000000, {
-        message: "Each image file must be less than 5MB",
-      })
+      z.union([
+        z.string().url(), // Accepts string URLs
+        z.instanceof(File).refine((file) => file.size <= 5000000, {
+          message: "Each image file must be less than 5MB",
+        }),
+      ])
     )
     .nonempty({ message: "At least one image is required" }),
-  menu: z.array(
-    z.object({
-      title: z.string().min(2),
-      description: z.string().min(2, {
-        message: "Menu item description must be at least 2 characters long",
-      }),
-      image: z.instanceof(File).refine((file) => file.size <= 5000000, {
-        message: "The image file must be less than 5MB",
-      }),
-    })
-  ),
+  menu: z
+    .array(
+      z.object({
+        title: z.string().min(2),
+        description: z.string().min(2, {
+          message: "Menu item description must be at least 2 characters long",
+        }),
+        image: z.union([
+          z.string().url(), // Accepts string URLs
+          z.instanceof(File).refine((file) => file.size <= 5000000, {
+            message: "The image file must be less than 5MB",
+          }),
+        ]),
+      })
+    )
+    .nonempty(),
   description: z
     .string()
     .min(5, { message: "Description must be at least 5 characters long" }),

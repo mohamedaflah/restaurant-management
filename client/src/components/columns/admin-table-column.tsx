@@ -14,6 +14,8 @@ import {
 } from "../ui/dropdown-menu";
 import { Checkbox } from "../ui/checkbox";
 import { DataTableColumnHeader } from "./column-header";
+import toast from "react-hot-toast";
+import { UpdateRestaurant } from "../app/updaterestaurant-modal";
 export const adminTableColumn: ColumnDef<IRestaurant>[] = [
   {
     id: "select",
@@ -109,26 +111,32 @@ export const adminTableColumn: ColumnDef<IRestaurant>[] = [
       payment;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText("payment?.pincode")}
-            >
-              Copy Pincode
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View more details</DropdownMenuItem>
-            <DropdownMenuItem>Edit restaurant</DropdownMenuItem>
-            <DropdownMenuItem>Delete restaurant</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() =>
+                  navigator.clipboard
+                    .writeText(row?.original?.pincode as string)
+                    .then(() => toast.success("Pin-code copied"))
+                }
+              >
+                Copy Pincode
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>View more details</DropdownMenuItem>
+              <UpdateRestaurant data={row.original} />
+              <DropdownMenuItem>Delete restaurant</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
       );
     },
   },

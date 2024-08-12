@@ -19,18 +19,11 @@ import { restaurantSchema } from "@/lib/schemas/restaurant.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { retaurantAddaction } from "@/redux/actions/restaurant-add.action";
-export const AddRestaurantModal = () => {
-  const removeHashValue = (hashToRemove: string): void => {
-    const currentHash = window.location.hash;
-    if (currentHash === hashToRemove) {
-      window.history.replaceState(null, "", " ");
-    }
-  };
+
+import { IRestaurant } from "@/types/restaurant.type";
+import { retaurantUpdateaction } from "@/redux/actions/updateRestaurant";
+export const UpdateRestaurant = ({ data }: { data: IRestaurant }) => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
-  useEffect(() => {
-    setOpenDialog(location.hash.includes("addrestaurant"));
-  }, []);
   const {
     setValue,
     watch,
@@ -50,6 +43,7 @@ export const AddRestaurantModal = () => {
       pincode: "",
     },
   });
+  console.log("🚀 ~ UpdateRestaurant ~ errors:", errors);
   const [menu, setMenu] = useState<{
     title: string;
     description: string;
@@ -96,34 +90,47 @@ export const AddRestaurantModal = () => {
     setMenu({ ...menu, [e.target.name]: e?.target?.files?.[0] });
   };
   const dispatch = useAppDispatch();
-  const handleAddRestaurant = (value: z.infer<typeof restaurantSchema>) => {
-    console.log(value);
-    dispatch(retaurantAddaction(value)).then((res) => {
-      if (res.type.endsWith("fulfilled")) {
-        setOpenDialog(false);
-        removeHashValue("#addrestaurant");
+  const handleResturantUpdate = (value: z.infer<typeof restaurantSchema>) => {
+    dispatch(retaurantUpdateaction({ id: data._id, sendData: value })).then(
+      (res) => {
+        if (res.type.endsWith("fulfilled")) {
+          setOpenDialog(false);
+        }
       }
-    });
+    );
   };
   const { loading } = useAppSelector((state) => state.retaurant);
+  useEffect(() => {
+    setValue("name", data.name);
+    setValue("location", data.location);
+    setValue("description", data.description);
+    setValue("contactNum", data.contactNum as string);
+    setValue("images", [...(data.images as unknown as [File, ...File[]])]);
+    setValue("pincode", data.pincode as string);
+    console.log(data.menu);
+
+    setValue("menu", [...(data.menu as never)]);
+    console.log(getValues("menu"), " IO");
+  }, [data]);
+
   return (
     <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
       <AlertDialogTrigger>
         {" "}
         <Button
-          className="h-8 ml-3"
-          onClick={() => (window.location.hash = "#addrestaurant")}
+          className="h-8 w-full justify-start flex px-2 "
+          variant={"ghost"}
         >
-          <span className="text-sm mt-[2px]">Add restaurant</span>
+          <span className="text-sm mt-[2px]">Edit restaurant</span>
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="min-w-[90%] sm:min-w-[70%] md:min-w-[56%] lg:min-w-[44%] xl:min-w-[38%] overflow-y-auto h-[620px] scrollbar-thin  overflow-x-hidden ">
         <AlertDialogHeader>
           <div className="w-full flex justify-between item-center">
-            <AlertDialogTitle>Add new restaurant</AlertDialogTitle>
+            <AlertDialogTitle>update restaurant</AlertDialogTitle>
             <AlertDialogCancel
               className="bg-transparent hover:bg-transparent w-auto p-0 border-none h-auto "
-              onClick={() => removeHashValue("#addrestaurant")}
+              //   onClick={}
             >
               <X className="w-5" />
             </AlertDialogCancel>
@@ -131,7 +138,7 @@ export const AddRestaurantModal = () => {
           <AlertDialogDescription className="overflow-x-hidden ">
             <form
               action=""
-              onSubmit={handleSubmit(handleAddRestaurant)}
+              onSubmit={handleSubmit(handleResturantUpdate)}
               className="flex flex-col overflow-x-hidden scrollbar-none px-1"
             >
               <div className="grid grid-cols-2 gap-3 w-full">
@@ -274,9 +281,11 @@ export const AddRestaurantModal = () => {
                               />
                             </div>
                             <img
-                              src={URL.createObjectURL(
-                                imageFile as Blob | MediaSource
-                              )}
+                              src={
+                                typeof imageFile == "string"
+                                  ? imageFile
+                                  : URL.createObjectURL(imageFile)
+                              }
                               className="w-full h-full object-cover "
                               alt=""
                             />
@@ -329,9 +338,13 @@ export const AddRestaurantModal = () => {
                       ) : (
                         <>
                           <img
-                            src={URL.createObjectURL(
-                              menu?.menuImg as Blob | MediaSource
-                            )}
+                            src={
+                              typeof menu.menuImg == "string"
+                                ? menu.menuImg
+                                : URL.createObjectURL(
+                                    menu.menuImg as Blob | MediaSource
+                                  )
+                            }
                             className="h-20"
                             alt=""
                           />
@@ -361,6 +374,7 @@ export const AddRestaurantModal = () => {
                         <div
                           className="inline-block h-32 w-24 border rounded-md relative overflow-hidden"
                           key={(JSON.stringify(menu) + "-", index)}
+                          data-ad={JSON.stringify(mnu)}
                         >
                           <div className="absolute right-1 top-1 bg-black/65 text-white cursor-pointer rounded-full size-6 flex justify-center items-center">
                             <X
@@ -370,16 +384,20 @@ export const AddRestaurantModal = () => {
                                   "menu",
                                   getValues("menu").filter(
                                     (_, idx) => index !== idx
-                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                   ) as any
                                 )
                               }
                             />
                           </div>
                           <img
-                            src={URL.createObjectURL(
-                              mnu?.image as Blob | MediaSource
-                            )}
+                            src={
+                              (typeof mnu.image == "string"
+                                ? mnu.image
+                                : URL.createObjectURL(mnu?.image)) as
+                                | string
+                                | undefined
+                            }
                             className="w-full h-full object-cover "
                             alt="IM"
                           />
